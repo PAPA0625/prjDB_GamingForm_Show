@@ -1,0 +1,93 @@
+﻿@model prjDB_GamingForm_Show.Models.Entities.Depute
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout_DBM.cshtml";
+}
+
+<h2>委託資訊修改</h2>
+<h4>請輸入修改資訊</h4>
+<hr>
+
+<div class="row">
+    <div class="col-md-10">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group" hidden>
+                <label asp-for="DeputeId" class="control-label"></label>
+                <input asp-for="DeputeId" class="form-control" />
+                <span asp-validation-for="DeputeId" class="text-danger"></span>
+            </div>
+            <div class="form-group" hidden>
+                <label asp-for="ProviderId" class="control-label"></label>
+                <input asp-for="ProviderId" class="form-control" />
+                <span asp-validation-for="ProviderId" class="text-danger"></span>
+            </div>
+            <div class="form-group" hidden>
+                <label asp-for="StartDate" class="control-label"></label>
+                <input asp-for="StartDate" class="form-control" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group" hidden>
+                <label asp-for="Modifiedate" class="control-label"></label>
+                <input asp-for="Modifiedate" class="form-control" />
+                <span asp-validation-for="Modifiedate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">標題</label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="form-label">委託內容</label>
+                <textarea asp-for="DeputeContent" class="form-control" style="height:200px"></textarea>
+                <span asp-validation-for="DeputeContent" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">提供報酬</label>
+                <input asp-for="Salary" class="form-control" />
+                <span asp-validation-for="Salary" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">狀態</label>
+                <select name="status" class="form-select" id="selStatus" aria-label="Default select example">
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="control-label">地區</label>
+                <select name="region" class="form-select" id="selRegion" aria-label="Default select example">
+                </select>
+            </div>
+            <div class="form-group">
+                <a asp-action="personal" class="btn btn-secondary">取消</a>
+                <input type="submit" value="送出並修改" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        async function loadRegions() {
+            const response = await fetch(`@Url.Content("~/depute/regions")`);
+            const datas = await response.json();
+            const regions = datas.map(region => `<option value="${region.city}">${region.city}</option>`);
+            document.querySelector("#selRegion").innerHTML = regions.join("");
+            document.querySelector("#selRegion").selectedIndex = @Model.RegionId-1;
+        }
+        loadRegions();
+
+        const deputeid = @Model.DeputeId;
+        async function loadStatuses(deputeID) {
+            const response = await fetch(`@Url.Content("~/depute/editDeputeStatuses")?id=${deputeID}`);
+            const datas = await response.json();
+            console.log(datas);
+            const statuses = datas.map(status => `<option value="${status.status}">${status.status}</option>`);
+            document.querySelector("#selStatus").innerHTML = statuses.join("");
+        }
+        loadStatuses(deputeid);
+    </script>
+}

@@ -1,0 +1,193 @@
+﻿@* @model IEnumerable<prjDB_GamingForm_Show.ViewModels.CBlogViewModel> *@
+@model prjDB_GamingForm_Show.ViewModels.CBlogViewModel
+
+@{
+    ViewData["Title"] = "List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/blogstyle.css" type="text/css">
+
+<header class="header-section">
+
+    <div class="nav-options">
+
+        <div class="container">
+
+            <div class="nav-menu">
+                <ul>
+                    <li>
+                        <a href="@Url.Action("List", "Blog")"><span>全部</span></a>
+                    </li>
+                    @{
+                        foreach (var item in Model.subTags)
+                        {
+                            <li>
+                                <a href="@Url.Action("List", "Blog", new { FId =item.SubTagId})"><span>@item.Name </span></a>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+            <div>
+
+                <div style="margin:3px 30%">
+
+                    @using (Html.BeginForm())
+                    {
+                        @:關鍵字 @Html.TextBox("txtKeyword")
+                        <input type="submit" value="查詢" />
+                    }
+                </div>
+            </div>
+            @*             @using (Html.BeginForm())
+            {
+            @:關鍵字 @Html.TextBox("txtKeyword")
+            <input type="submit" value="查詢" />
+            } *@
+        </div>
+    </div>
+</header>
+<section class="instagram-post-section spad" style="background-color:#272727">
+    <div style="float:left;padding:10px">
+        <p style="text-align:center;font-size:24px">熱門商品</p>
+        <div id="div1"></div>
+@*        <div id="imageContainer" style="padding:10px; display:flex;">
+            <a id="imageLink" href="@Url.Action("Details","Shop",new{id=20})" target="_blank">
+                <img id="changingImage" src="~/images/D4AD.png" width="330" height="450" alt="" style="border-radius:5px">
+            </a>
+        </div>*@
+        <br />
+        <div style="padding:10px;display:flex">
+            <a href="@Url.Action("DeputeList","Depute")" target="_blank">
+                <img src="~/images/AD/forjob.jpg" width="330" height="450" alt="" style="border-radius:5px">
+            </a>
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+    <div class="container">
+        <div class="row" style="border-radius:8px;box-shadow:0px 0px 8px 8px #cccccc">
+            <div class="col-lg-12" style="background-color:#4F4F4F;border-radius:8px">
+
+                @{
+                    foreach (var item in Model.blogs)
+                    {
+                        <div class="ip-item" style="border-bottom:1px dotted black;padding:12px;margin:0px;">
+                            <div class="ip-pic">
+                                <a href="@Url.Action("ArticleList", "Blog", new { FId =item.BlogId})">
+                                    <img src="~/images/@item.FImagePath" width="360" height="108" alt="">
+                                </a>
+                            </div>
+                            <div class="ip-text" style="margin-bottom:24px">
+                                <i class="bi bi-caret-up-fill" style="color:red"></i>
+                                <a style="text-decoration:none" href="@Url.Action("ArticleList", "Blog", new { FId =item.BlogId})">
+                                    <span style="color: #FFFFFF;font-size:32px">@item.Title</span>
+                                </a>
+                                <br />
+                                <a style="font-size:16px;text-decoration:none" href="@Url.Action("ArticleContent", "Blog", new { FId =item.BlogId,AFId=item.SubBlogs.FirstOrDefault().Articles.LastOrDefault().ArticleId})">@item.SubBlogs.First().Articles.LastOrDefault().Title</a>
+                            </div>
+                            <i class="bi bi-file-earmark-text" title="昨日發文數" style="">@item.SubBlogs.FirstOrDefault().Articles.Count(a => a.ModifiedDate.Date == DateTime.Today.AddDays(-1))</i>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@*     <script src="~/js/jquery-3.3.1.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/jquery.magnific-popup.min.js"></script>
+    <script src="~/js/circle-progress.min.js"></script>
+    <script src="~/js/jquery.barfiller.js"></script>
+    <script src="~/js/jquery.slicknav.js"></script>
+    <script src="~/js/owl.carousel.min.js"></script>
+    <script src="~/js/blogmain.js"></script> *@
+@* </body>
+</html>
+ *@
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+<script>
+
+    $(document).ready(function () {
+        function fetchAndDisplayImage() {
+            fetch('@Url.Content("~/Blog/shoppartialview")')
+                .then(response => response.json())
+                .then(data => {
+                    const encodedProductId = encodeURIComponent(data.productId);
+                    const encodedFImagePath = encodeURIComponent(data.fImagePath);
+                    $('#div1').html(
+                        `
+                            <a href="@Url.Content("~/Shop/Details")?id=${encodedProductId}">
+                                <img src="/images/shop/${encodedFImagePath}" width="330" height="450"/>
+                            </a>
+                            `
+                    );
+                });
+        }
+
+        fetchAndDisplayImage();
+        setInterval(fetchAndDisplayImage, 3000);
+    });
+
+
+
+  
+
+    //$(document).ready(function () {
+    //    fetch('@Url.Content("~/Blog/shoppartialview")')
+    //        .then(response => response.json())
+    //        .then(data => $('#div1').html(`<img src="~/images/shop/${data[2].fImagePath}" alt="Shop Image" />`))
+    //        .catch(error => console.error('Error fetching data:', error));
+    //});
+
+
+
+
+    // N组圖片，包含要循環展示的圖片路徑
+    var imageArray = [
+        '../images/AD/adD4.png',
+        '../images/AD/adAOE4.png',
+        '../images/AD/adBDG3.jpg',
+
+    ];
+
+    var linkArray = [
+        '@Url.Action("Details","Shop",new{id=20})',
+        '@Url.Action("Details","Shop",new{id=19})',
+        '@Url.Action("Details","Shop",new{id=5})',
+
+    ]
+
+    // 當前圖像索引為0
+    var currentIndex = 0;
+
+    // 讀取需要更换的元素
+    var imageLink = document.getElementById('imageLink');
+    var changingImage = document.getElementById('changingImage');
+
+    // 以下設置時間，N秒換一次圖
+    setInterval(function () {
+        // 切换到下一張圖
+        currentIndex = (currentIndex + 1) % imageArray.length;
+
+        // 更新圖像路徑
+        changingImage.src = imageArray[currentIndex];
+        // 更新連結地址，如果需要
+        imageLink.href = linkArray[currentIndex]
+
+
+    }, 3000); //3秒
+
+
+
+
+</script>

@@ -1,0 +1,80 @@
+﻿@*@model IEnumerable<prjDB_GamingForm_Show.ViewModels.CBlogViewModel>*@
+@model prjDB_GamingForm_Show.ViewModels.CBlogViewModel
+@{
+    ViewData["Title"] = "BlogList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 style="margin-left:5px ; font-size:45px">論壇版面清單</h2>
+@using (Html.BeginForm())
+{
+    <p style="display:inline;font-size:30px;margin-left:5px;margin-right:10px">名稱關鍵字查詢 : </p> @Html.TextBox("txtKeyWord",null,new{@class = "col-form-label"})
+    <input type="submit" value="查詢" class="btn btn-dark" />
+}
+
+<p style="margin-left:5px">
+    @*<input type="button" id="last" value="上一頁" class="btn btn-dark" />
+    <input type="button" id="next" value="下一頁" class="btn btn-dark" />*@
+    @Html.ActionLink("上一頁", "BlogListPrevious", "Admin", null, new  { @class = "btn btn-dark" })
+    @Html.ActionLink("下一頁", "BlogListNext", "Admin", null, new  { @class = "btn btn-dark" })
+</p>
+<table class="table table-dark table-hover" style="color:white ; font-size:20px">
+    <thead>
+        <tr>
+            <th>
+                編號
+            </th>
+            <th>
+                名稱
+            </th>
+            <th>
+                所屬分類
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            string category = "";
+
+            foreach (var item in Model.blogs)
+            {
+                <tr>
+                    <td id="bid">
+                        @Html.DisplayFor(modelItem => item.BlogId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SubTag.Name)
+                    </td>
+                    <td>
+                        @Html.ActionLink("修改", "Edit","Admin", new { /* id=item.PrimaryKey */ },new  { @class = "btn btn-dark" })
+                        @Html.ActionLink("詳細", "Details","Admin", new { /* id=item.PrimaryKey */ },new  { @class = "btn btn-dark" })
+                        @Html.ActionLink("刪除", "Delete","Admin", new { /* id=item.PrimaryKey */ },new  { @class = "btn btn-dark" })
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+
+</table>
+@*@section Scripts{
+    <script>
+        const lastbtn = document.querySelector('#last');
+        const nextbtn = document.querySelector('#next');
+        nextbtn.addEventListener('click', () => {
+            next();
+        });
+
+        async function next() {
+            const response = await fetch('@Url.Content("~/Admin/BlogListNext")');
+            const datas = await response.json()
+            const blogid = datas.map(b => `${b}`)
+            document.querySelector('bid').innerHTML = blogid.join("")
+            console.log(blogid)
+        }
+
+    </script>
+}*@

@@ -1,0 +1,61 @@
+﻿@model IEnumerable<prjDB_GamingForm_Show.Models.Entities.DeputeRecord>
+
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<table class="table table-dark table-striped table-bordered">
+
+    <tr>
+        <th hidden></th>
+        <th class="col-1">
+            #
+        </th>
+        <th class="col-4">
+            內容
+        </th>
+        <th class="col-1">
+            狀態
+        </th>
+        <th class="col-1">
+            報酬
+        </th>
+        <th class="col-2">
+            更新時間
+        </th>
+        <th class="col-3"></th>
+    </tr>
+
+
+    @{
+        int count = 0;
+        foreach (var i in Model)
+        {
+            count++;
+            <tr>
+            <td hidden>@i.Id</td>
+                <td hidden>@i.DeputeId</td>
+                <td class="col-1">
+                    @count
+                </td>
+                <td class="col-3">
+                    @i.Depute.DeputeContent
+                </td>
+                <td class="col-1">
+                    @i.ApplyStatus.Name
+                </td>
+                <td class="col-1">
+                    @i.Depute.Salary.ToString("$###,###,##0.##")
+                </td>
+                <td class="col-1">
+                    @i.Depute.Modifiedate.ToString("yyyy/MM/dd HH:mm")
+                </td>
+                <td class="col-3">
+                    @Html.ActionLink("詳細資料", "Details", new { id = i.Id }, new { @class = "btn btn-secondary" }) |
+                    @Html.ActionLink("撤回", "DeleteDeputeRecord", "Depute", new { id = i.Id }, new { @class = "btn btn-danger" })
+                </td>
+            </tr>
+        }
+    }
+</table>
+
